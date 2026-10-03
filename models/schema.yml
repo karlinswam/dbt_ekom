@@ -1,0 +1,53 @@
+version: 2
+models:
+
+  - name: stg_products
+    description: Clean product master data.
+    columns: 
+      - {name: product_id,        data_tests: [not_null, unique]}
+
+  - name: stg_customers
+    description: Clean customer master data.
+    columns: 
+      - {name: customer_id,       data_tests: [not_null, unique]}
+        
+  - name: stg_orders
+    description: Clean order headers.
+    columns: 
+      - {name: order_id,          data_tests: [not_null, unique]}
+      - {name: customer_id,       data_tests: [ {relationships: {arguments: {to: "ref('stg_customers')" , field: customer_id  }}} ] }
+
+  - name: stg_order_items
+    description: Clean order line items.
+    columns:
+      - {name: order_item_id,     data_tests: [not_null, unique]}
+      - {name: order_id,          data_tests: [ {relationships: {arguments: {to: "ref('stg_orders')"    , field: order_id     }}} ] }
+      - {name: product_id,        data_tests: [ {relationships: {arguments: {to: "ref('stg_products')"  , field: product_id   }}} ] }
+
+  - name: int_customer_order_metrics
+    description: All of the customer level aggretaed metrics table
+    columns: [{name: customer_id,       data_tests: [not_null, unique]}]
+
+  - name: int_order_revenue
+    description: order level revenue table
+    columns: [{name: order_id,          data_tests: [not_null, unique]}]
+
+  - name: customer_summary
+    description: Customer attributes and order lifecycle metrics.
+    columns: [{name: customer_id,       data_tests: [not_null, unique]}]
+
+  - name: top_10_customers
+    description: Highest-value customers by lifetime revenue.
+    columns: [{name: customer_id,       data_tests: [not_null, unique]}]
+
+  - name: sales_summary
+    description: Order-level sales revenue.
+    columns: [{name: order_id,          data_tests: [not_null, unique]}]
+
+  - name: monthly_sales_trend
+    description: Monthly order count and revenue.
+    columns: [{name: sales_month,       data_tests: [not_null, unique]}]
+
+  - name: category_revenue
+    description: Revenue and units by product category.
+    columns: [{name: category,          data_tests: [not_null, unique]}]
