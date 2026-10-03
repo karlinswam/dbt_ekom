@@ -1,11 +1,13 @@
 {% macro create_audit_objects() %}
 
-    {% do run_query("
-        create schema if not exists dbt_ekom_analytics.audit
-    ") %}
+    {% set sql %}
+        create schema if not exists {{ target.catalog }}.audit
+    {% endset %}
+     
+    {% do run_query(sql) %}
 
-    {% do run_query("
-        create table if not exists dbt_ekom_analytics.audit.audit_log (
+    {% set sql %}
+        create table if not exists {{ target.catalog }}.audit.audit_log (
             invocation_id string,
             job_name string,
             status string,
@@ -13,7 +15,7 @@
             end_time timestamp,
             row_count bigint
         ) using delta
-    ") %}
+    {% endset %}
 
 {% endmacro %}
 
