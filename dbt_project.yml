@@ -16,14 +16,14 @@ seeds: {dbt_ekom: {+schema: landing}}
 
 models:
   dbt_ekom:
-    +materialized: table
-    +database: "{{ target.catalog }}"
-    +pre-hook: "{{ audit_start() }}"
-    +post-hook: "{{ audit_end() }}"
+    +materialized:  table
+    +database:      "{{ target.catalog }}"
+    +pre-hook:      "{{ audit_start() }}"
+    +post-hook:     "{{ audit_end() }}"
 
     staging:      {+schema: bronze, +materialized: view}
     intermediate: {+schema: silver}
     mart:         {+schema: gold}
 
 on-run-start: ["{{ create_audit_objects() }}", "{{ audit_run_start() }}"]
-on-run-end: ["{{ audit_run_end() }}"]
+on-run-end:   ["{{ audit_run_end() }}"]
