@@ -5,7 +5,14 @@ sources:
     schema: landing
     description: Raw e-commerce tables loaded through dbt seeds.
     tables:
+      - name: products
       - name: customers
       - name: orders
-      - name: products
+        loaded_at_field: cast(order_date as timestamp)
+
+        config:
+          freshness:
+            warn_after: {count: "{{ env_var('DBT_FRESH_WARN_DAYS')}}", period: day}
+            error_after: {count: "{{ env_var('DBT_FRESH_ERROR_DAYS')}}", period: day}
+            
       - name: order_items
