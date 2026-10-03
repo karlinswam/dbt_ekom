@@ -1,16 +1,25 @@
-{% macro create_audit_schema() %}
-  create schema if not exists {{ target.catalog }}.audit
+{% macro create_audit_objects() %}
+
+    {% do run_query("
+        create schema if not exists dbt_ekom_analytics.audit
+    ") %}
+
+    {% do run_query("
+        create table if not exists dbt_ekom_analytics.audit.audit_log (
+            invocation_id string,
+            job_name string,
+            status string,
+            start_time timestamp,
+            end_time timestamp,
+            row_count bigint
+        ) using delta
+    ") %}
+
 {% endmacro %}
 
-{% macro create_audit_table() %}
-  create table if not exists {{ target.catalog }}.audit.audit_log (
-    invocation_id string,
-    job_name string,
-    status string,
-    start_time timestamp,
-    end_time timestamp,
-    row_count bigint
-  ) using delta
+{% macro audit_run_start() %}
+  insert into {{ target.catalog }}.audit.audit_log
+  values ('{{ invocation_id }}', '{{ this }}', 'RUN START', current_timestamp(), cast(null as timestamp), cast(null as bigint))
 {% endmacro %}
 
 {% macro audit_start() %}
@@ -26,5 +35,5 @@
 
 {% macro audit_run_end() %}
   insert into {{ target.catalog }}.audit.audit_log
-  values ('{{ invocation_id }}', '{{ this }}', 'RUN COMPLETE', current_timestamp(), cast(null as timestamp), cast(null as bigint))
+  values ('{{ invocation_id }}', '{{ this }}', 'RUN COMPLETE', cast(null as timestamp), current_timestamp(), cast(null as bigint))
 {% endmacro %}
