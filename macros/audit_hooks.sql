@@ -19,7 +19,7 @@
 
 {% macro audit_run_start() %}
   insert into {{ target.catalog }}.audit.audit_log
-  values ('{{ invocation_id }}', '{{ this }}', 'RUN START', current_timestamp(), cast(null as timestamp), cast(null as bigint))
+  values ('{{ invocation_id }}', 'DBT_RUN', 'RUN START', current_timestamp(), cast(null as timestamp), cast(null as bigint))
 {% endmacro %}
 
 {% macro audit_start() %}
@@ -34,6 +34,10 @@
 {% endmacro %}
 
 {% macro audit_run_end() %}
-  insert into {{ target.catalog }}.audit.audit_log
-  values ('{{ invocation_id }}', '{{ this }}', 'RUN COMPLETE', cast(null as timestamp), current_timestamp(), cast(null as bigint))
+  update {{ target.catalog }}.audit.audit_log
+  set
+      status = 'RUN COMPLETE',
+      end_time = current_timestamp()
+  where invocation_id = '{{ invocation_id }}'
+    and job_name = 'DBT_RUN'
 {% endmacro %}
