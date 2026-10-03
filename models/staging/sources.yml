@@ -6,8 +6,23 @@ sources:
     description: Raw e-commerce tables loaded through dbt seeds.
     tables:
       - name: products
+        description: "List of Products, catagory and price "
+        config:
+          loaded_at_query: | 
+            SELECT  {{ dbt.current_timestamp() }}
+          freshness:
+            warn_after: {count: "{{ env_var('DBT_FRESH_WARN_DAYS')}}", period: day}
+            error_after: {count: "{{ env_var('DBT_FRESH_ERROR_DAYS')}}", period: day}
       - name: customers
+        description: "List of customer and details "
+        config:
+          loaded_at_query: | 
+            SELECT  {{ dbt.current_timestamp() }}
+          freshness:
+            warn_after: {count: "{{ env_var('DBT_FRESH_WARN_DAYS')}}", period: day}
+            error_after: {count: "{{ env_var('DBT_FRESH_ERROR_DAYS')}}", period: day}
       - name: orders
+        description: "List of orders made by customers "
         config:
           loaded_at_field: cast(order_date as timestamp)
           freshness:
@@ -15,3 +30,10 @@ sources:
             error_after: {count: "{{ env_var('DBT_FRESH_ERROR_DAYS')}}", period: day}
             
       - name: order_items
+        description: "List of order items within orders "
+        config:
+          loaded_at_query: | 
+            SELECT  {{ dbt.current_timestamp() }}
+          freshness:
+            warn_after: {count: "{{ env_var('DBT_FRESH_WARN_DAYS')}}", period: day}
+            error_after: {count: "{{ env_var('DBT_FRESH_ERROR_DAYS')}}", period: day}
