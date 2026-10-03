@@ -25,5 +25,5 @@ models:
     intermediate: {+schema: silver}
     mart:         {+schema: gold}
 
-on-run-start: ["{{ create_audit_schema(), create_audit_table() }}"]
+on-run-start: ["{{ create_audit_objects() }}", "{{ audit_run_start() }}"]
 on-run-end: ["{{ audit_run_end() }}"]
